@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * configuration 
+ *
+ *
+ * @category    Extension
+ * @package     rkt_jscssforsb
+ * @programmer  Programmer-rkt
+ */
+-->
+<config>
+    <modules>
+        <Rkt_JsCssforSb>
+            <version>1.0.0</version>
+        </Rkt_JsCssforSb>
+    </modules>
+    <frontend>
+        <events>
+             <controller_action_layout_generate_blocks_after>
+                    <observers>
+                        <apply_jscss_to_cmsblocks>
+                            <class>rkt_jscssforsb/observer</class>
+                            <method>applyJsCssToCMSBlocks</method>
+                        </apply_jscss_to_cmsblocks>
+                    </observers>
+            </controller_action_layout_generate_blocks_after>
+        </events>
+    </frontend>
+    <adminhtml>
+        <events>
+            <adminhtml_block_html_before>
+                <observers>
+                    <add_jscss_fieldset_in_cms_block_edit_form>
+                        <class>rkt_jscssforsb/observer</class>
+                        <method>addNewFieldsetForCmsBlock</method>
+                    </add_jscss_fieldset_in_cms_block_edit_form>
+                </observers>
+            </adminhtml_block_html_before>
+            <cms_block_save_after>
+                <observers>
+                    <save_jscss>
+                        <class>rkt_jscssforsb/observer</class>
+                        <method>saveJsCss</method>
+                    </save_jscss>
+                </observers>
+            </cms_block_save_after>
+        </events>
+    </adminhtml>
+        <global>
+            <models>
+                <cms>
+                    <rewrite>
+                        <block>Rkt_JsCssforSb_Model_Block</block>
+                    </rewrite>
+                </cms>
+                <rkt_jscssforsb>
+                    <class>Rkt_JsCssforSb_Model</class>
+                    <resourceModel>rkt_jscssforsb_resource</resourceModel>
+                </rkt_jscssforsb>
+                <rkt_jscssforsb_resource>
+                    <class>Rkt_JsCssforSb_Model_Resource</class>
+                    <entities>
+                        <jsCss>
+                            <table>rkt_jscssforsb_cms_block_jscss</table>
+                        </jsCss>
+                    </entities>
+                </rkt_jscssforsb_resource>
+            </models>      
+        <resources>
+            <rkt_jscssforsb_setup>
+                <setup>
+                    <module>Rkt_JsCssforSb</module>
+                    <class>Rkt_JsCssforSb_Model_Resource_Setup</class>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </rkt_jscssforsb_setup>
+            <rkt_jscssforsb_write>
+                <connection>
+                    <use>core_write</use>
+                </connection>
+            </rkt_jscssforsb_write>
+            <rkt_jscssforsb_read>
+                <connection>
+                    <use>core_read</use>
+                </connection>
+            </rkt_jscssforsb_read>
+        </resources>
+        <helpers>
+            <rkt_jscssforsb>
+                <class>Rkt_JsCssforSb_Helper</class>
+            </rkt_jscssforsb>
+        </helpers>
+         <blocks>
+            <rkt_jscssforsb>
+                <class>Rkt_JsCssforSb_Block</class>
+            </rkt_jscssforsb>
+
+        </blocks> 
+    </global>
+</config>

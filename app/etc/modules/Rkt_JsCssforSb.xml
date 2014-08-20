@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Rktnto
+ *
+ *
+ * @category    Extension
+ * @package     Rkt_JsCssforSb
+ * @programmer  Programmer-rkt
+ */
+-->
+<config>
+    <modules>
+        <Rkt_JsCssforSb>
+            <active>true</active>
+            <codePool>community</codePool>
+            <depends>
+                <Mage_Cms />
+            </depends>
+        </Rkt_JsCssforSb>
+    </modules>
+</config>
