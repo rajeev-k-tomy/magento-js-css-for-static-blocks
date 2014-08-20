@@ -25,3 +25,15 @@ Rewrite - 1
 Observers - 3
 </pre>
 
+SNAPSHOTS
+----------
+
+NOTES
+------
+
+1. Don't put `<script>` or `<style>` tags inside the text areas. The extension will autogenerate this enclosure html tags.
+2. You can put javascirpt and css directly inside text areas
+3. Don't put html contents inside the text area
+4. You can put jquery in text area. In this case, it is your job to make sure that, necessary jquery files are added.
+5. By default, all the script that are related to static blocks are get included in the bottom side of the page and css files are included in `head` part (bottom side).
+
