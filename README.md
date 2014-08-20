@@ -27,6 +27,7 @@ Observers - 3
 
 SNAPSHOTS
 ----------
+http://stackoverflow.com/questions/17832914/how-do-i-extend-cms-block-on-save-event-of-magento
 
 NOTES
 ------
