@@ -17,7 +17,7 @@ class Rkt_JsCssforSb_Helper_Data extends Mage_Core_Helper_Abstract {
 	  *
 	  */
 	public function modifyData($data){
-		if($data != '')
+		if($data != '') {
 			$trimed_data = str_replace(array(" ","\n","\t","'"),array("","","",'"'),trim($data));	
 
 			return preg_replace('/\s+/','',$trimed_data	);
