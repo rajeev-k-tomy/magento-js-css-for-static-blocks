@@ -8,13 +8,21 @@ A Magento Extension that will allow to add javascript and css for static blocks.
 COMPATIBILITY
 ---------------
 
-Currently this extension supports Magento 1.8
+Currently this extension supports Magento 1.8,1.9,1.8.1
 
 
-THEORY
+MORE INFO
 --------
 
-For more theoretical details of extension, you can checkout my blog
+You can chekckout my blog for more details : http://rajeev-k-tomy.blogspot.in/2014/08/js-and-css-for-static-block-magento.html
+
+HOW TO INSTALL
+---------------
+1. Download the zip file
+2. Unzip it and go to the root directory of your Magneto Applicatioin
+3. Merge unzipped file there.
+
+Soon Magento Connect will be availble for this extension.
 
 ADVANCED DETAILS
 ------------------
@@ -25,9 +33,6 @@ Rewrite - 1
 Observers - 3
 </pre>
 
-SNAPSHOTS
-----------
-http://stackoverflow.com/questions/17832914/how-do-i-extend-cms-block-on-save-event-of-magento
 
 NOTES
 ------
