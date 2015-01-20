@@ -195,6 +195,3 @@ class Rkt_JsCssforSb_Model_Observer {
 	    return false;
 	}
 }
-//http://stackoverflow.com/questions/17832914/how-do-i-extend-cms-block-on-save-event-of-magento
-?>
-
