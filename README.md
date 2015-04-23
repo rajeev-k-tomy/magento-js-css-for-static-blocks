@@ -8,7 +8,7 @@ A Magento Extension that will allow to add javascript and css for static blocks.
 COMPATIBILITY
 ---------------
 
-Currently this extension supports Magento 1.8,1.9,1.8.1
+Currently this extension supports Magento 1.8,1.9,1.8.1. Most probably this extension  will work with lower version too.
 
 
 MORE INFO
@@ -42,4 +42,4 @@ NOTES
 3. Don't put html contents inside the text area
 4. You can put jquery in text area. In this case, it is your job to make sure that, necessary jquery files are added.
 5. By default, all the script and CSS that are related to static blocks are included in `head` part.
-
+6. Extension can detect static blocks that are added via `layout-updates`, static blocks that are added via `block-directive` (eg: `{{block id="blockId"}}` or `{{block type="cms/block" block_id="blockId"}}`) in CMS Pages and static block that are added via `layout-directive` (eg: `{{layout handle="some_handle"}}`) in CMS Pages.
