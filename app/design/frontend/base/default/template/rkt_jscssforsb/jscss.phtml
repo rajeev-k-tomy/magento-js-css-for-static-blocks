@@ -25,38 +25,12 @@
  * @see Rkt_JsCssforSb_Block_Jscss
  */
 ?>
-<?php
-	$ids = explode(",",$this->getJscssIds());
+<?php foreach ($this->getAllStyles() as $style) : ?>
+	<style type="text/css"><?php echo $style->content; ?></style>
+<?php endforeach; ?>
 
-	foreach ($ids as $key => $value) {
-	
-	    //get current entity
-		$jscss = $this->getJscssEntity($value);
-
-		//retrieves required data
-	    $js = Mage::helper('rkt_jscssforsb')->modifyData($jscss->getJscssJs());
-		$css = Mage::helper('rkt_jscssforsb')->modifyData($jscss->getJscssCss());
-		$block_id = (int)$jscss->getBlockId();
-?>
-
-		<?php /* This script is use to put css in head */ ?>
-		<script type="text/javascript">
-		//<![CDATA[
-			document.observe('dom:loaded', function(){
-				$(document.head).insert({
-					bottom: new Element('style', {'id': 'css-for-cms-block-<?php echo $block_id; ?>', type : 'text/css'})
-				});
-				$('css-for-cms-block-<?php echo $block_id; ?>').update('<?php print_r($css); ?>');
-			});
-		//]]>
-		</script>
-
-		<?php /* This script is use to hold js for cms block  */ ?>
-		<script id="js-for-cms-block-<?php echo $block_id; ?>" type="text/javascript">
-		//<![CDATA[
-			document.observe('dom:loaded', function(){
-				<?php print_r($js); ?>
-			});
-		//]]>
-		</script>
-<?php } ?>
+<?php foreach ($this->getAllScripts() as $script) : ?>
+	<script type="text/javascript">//<![CDATA[
+		<?php echo $script->content; ?>
+	//]]></script>
+<?php endforeach; ?>

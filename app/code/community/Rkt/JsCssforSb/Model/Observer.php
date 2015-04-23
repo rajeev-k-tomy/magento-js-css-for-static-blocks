@@ -27,12 +27,12 @@ class Rkt_JsCssforSb_Model_Observer
 {
 
 	/**
-	  *
-	  * Use to set jsscss fieldsets in cms_block
-	  *
-	  * @param  Varien_Event_Observer | $observer
-	  *
-	  */
+	 *
+	 * Use to set jsscss fieldsets in cms_block
+	 *
+	 * @param  Varien_Event_Observer | $observer
+	 * @return Rkt_JsCssforSb_Model_Observer
+	 */
 	public function addNewFieldsetForCmsBlock(Varien_Event_Observer $observer) 
 	{ 
 		$block = $observer->getEvent()->getBlock();
@@ -42,11 +42,12 @@ class Rkt_JsCssforSb_Model_Observer
 	         
 	        //get cms_block form
 	        $form = $block->getForm();
+	        $jscssModel = Mage::getModel('rkt_jscssforsb/jsCss');
 
 	        //get jscss values
 	        $js_value = ''; $css_value = '';
 	        $block_id = (int) Mage::registry('cms_block')->getBlockId();
-	        $cms_block = $this->getJsCssEntity($block_id);
+	        $cms_block = $jscssModel->getJsCssByStaticBlockId($block_id);
 
 	        //get values if entity exist
 	        if ($cms_block) {
@@ -81,12 +82,12 @@ class Rkt_JsCssforSb_Model_Observer
 	}
 
 	/**
-	  *
-	  * Use to save js and css for cms_block
-	  *
-	  * @param  Varien_Event_Observer | $observer
-	  *
-	  */
+	 *
+	 * Use to save js and css for cms_block
+	 *
+	 * @param  Varien_Event_Observer | $observer
+	 * @return Rkt_JsCssforSb_Model_Observer
+	 */
 	public function saveJsCss(Varien_Event_Observer $observer) 
 	{
 
@@ -95,8 +96,8 @@ class Rkt_JsCssforSb_Model_Observer
 
         //retrieve essential datas to store
 		$block_id = (int) $cms_block->getBlockId();
-		$js = Mage::helper('rkt_jscssforsb')->modifyData($cms_block->getJscssJs());
-		$css = Mage::helper('rkt_jscssforsb')->modifyData($cms_block->getJscssCss());
+		$js = $cms_block->getJscssJs();
+		$css = $cms_block->getJscssCss();
 
 		if ($js != '' || $css != '') { 
 
@@ -111,94 +112,96 @@ class Rkt_JsCssforSb_Model_Observer
 			$model = Mage::getModel('rkt_jscssforsb/jsCss');
 
 			//saves data if cms block is new
-			if (!$this->getJsCssEntity($block_id)) {
+			if (!$model->getJsCssByStaticBlockId($block_id)) {
 				$model->addData($data);
 				$model->save();
 
 			} else { //saves data if entry already exist
-				$exist_block = $this->getJsCssEntity($block_id);
+				$exist_block = $model->getJsCssByStaticBlockId($block_id);
 				$exist_block->addData($data);
 				$exist_block->save();
 			}
 		}
-
+		return $this;
 	}
 
 	/**
-	  *
-	  * Apply css and js to static blocks
-	  *
-	  * @param  Varien_Event_Observer | $observer
-	  *
-	  */
-	public function applyJsCssToCMSBlocks(Varien_Event_Observer $observer) {
-
-		//set default values to variables
+	 *
+	 * Apply css and js to static blocks
+	 *
+	 * @param  Varien_Event_Observer | $observer
+	 * @return Rkt_JsCssforSb_Model_Observer
+	 */
+	public function applyJsCssToCMSBlocks(Varien_Event_Observer $observer) 
+	{
 		$flag = 0; 
 		$jscss_ids = array();
+		$pageHelper = Mage::helper('rkt_jscssforsb/page');
+		$jscssHelper = Mage::helper('rkt_jscssforsb');
 
 		$layout = $observer->getEvent()->getLayout();
 
 		foreach ($layout->getAllBlocks() as $block) {
-		
-			if ($block instanceof Mage_Cms_Block_Block) {
+			
+			//look static blocks in layouts. If static blocks are
+			//there, then collect corresponding js css entry.
+			if ($jscssHelper->isStaticBlock($block)) {
+				$flag = 1;
+				$jscss = $this->_getJsCss($block);
+				if ((int)$jscss->getJscssId() > 0) {
+					$jscss_ids[] = (int)$jscss->getJscssId();
+				}
+			}
+
+			//There may be static blocks that are included via CMS Page
+			//content section as block directive or layout directive. 
+			//In that case, find them and collect the js css entry.
+			if ($block instanceof Mage_Cms_Block_Page) {
 				$flag = 1;
 
-				//get cms block id
-				$block_identifier = $block->getBlockId();
-				$block_id = (int)Mage::getModel('cms/block')->getCollection()
-				 			->addFieldToSelect('block_id')
-				 			->addFieldToFilter('identifier', array('eq' => $block_identifier))
-				 			->load()
-				 			->getFirstItem()
-				 			->getBlockId();
-				
+				$page = $block->getPage();
+				$content = $page->getContent();
 
-	     		//check for any entry that is correspond for cms block
-	     		if ($cms_block = $this->getJsCssEntity($block_id)) {
-	     			//store jscss ids
-	     			$jscss_ids[] = (int)$cms_block->getJscssId();
-	     		}
-				
+				$cmsStaticBlocks = $pageHelper->findStaticBlocks($content);
+				foreach ($cmsStaticBlocks as $sb) {
+					if ($jscssHelper->isStaticBlock($sb)) {
+						$jscss = $this->_getJsCss($sb);
+						if ((int)$jscss->getJscssId() > 0) {
+							$jscss_ids[] = (int)$jscss->getJscssId();
+						}
+					}
+				}
 			}
 		}
 
-		if ($flag == 1) {
+		//if jscss entity exist for any of the static block that is included
+		//in the requested  page, then include those js and css files into the
+		//layout.
+		if ($flag == 1 && count($jscss_ids) > 0) {
+	     	$jscssBlock = $layout->createBlock('rkt_jscssforsb/jscss', 'jscss_block');
+			$jscssBlock->setActiveJsCss($jscss_ids);
+			$layout->getBlock('head')->append($jscssBlock);
+		}
 
-			//create a custom block to insert js and css correspond to cms block
-	     	$new_block = $layout->createBlock(
-				'Rkt_JsCssforSb_Block_Jscss', 'jscss_block',
-				array(
-					'template'  => 'rkt_jscssforsb/jscss.phtml',
-					'jscss_ids' => Mage::helper('rkt_jscssforsb')->__(implode(",", $jscss_ids)),
-				) 
-			);
-			$layout->getBlock('content')->append($new_block);
-		}	
+		return $this;	
 	}
 
 	/**
-	  *
-	  * Use to get jscss entity correspond to cms > block that is editing currently
-	  *
-	  * @param  int | $block_id
-	  * @return boolean or Rkt_JsCssforSb_Model_JsCss | false or $item
-	  *
-	  */
-	public function getJsCssEntity($block_id)
+	 * Use to get jscss entity corresponding to the static block passed
+	 * 
+	 * @param  Mage_Cms_Block_Block $block
+	 * @return Rkt_JsCssforSb_Model_JsCss $jscss
+	 */
+	protected function _getJsCss(Mage_Cms_Block_Block $block)
 	{
+		$CMSBlockModel = Mage::getModel('cms/block');
+		$jscssModel = Mage::getModel('rkt_jscssforsb/jsCss');
 
-		//loads collection
-		$collection = Mage::getModel('rkt_jscssforsb/jsCss')->getCollection()
-						->addFieldToSelect('*')
-	        			->addFieldToFilter('block_id', array('eq' => $block_id))		
-	        			->load();
+		/** @var  $sb->getBlockId() returns static block identifier */
+		$staticBlock = $CMSBlockModel->load($block->getBlockId(), 'identifier');
+		$id = (int)$staticBlock->getBlockId();
+		$jscss = $jscssModel->getJsCssByStaticBlockId($id);
 
-	    //ensure an item exist
-	    if (count($collection->getFirstItem()->getData())) {
-	    	return $collection->getFirstItem();
-	    }
-	    
-	    return false;
+		return $jscss;
 	}
 }

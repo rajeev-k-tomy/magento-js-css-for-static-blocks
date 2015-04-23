@@ -26,20 +26,17 @@ class Rkt_JsCssforSb_Helper_Data extends Mage_Core_Helper_Abstract
 {
 	
 	/**
-	  *
-	  * Use to trim unwanted spaces, new lines from passed data
-	  *
-	  * @param  string $data
-	  * @return string  
-	  *
-	  */
-	public function modifyData($data)
+	 * Use to check whether the passed variable is a static block instance
+	 * 
+	 * @param  mixed  $block 
+	 * @return boolean
+	 */
+	public function isStaticBlock($block)
 	{
-		if ($data != '') {
-			$trimed_data = str_replace(array(" ", "\n", "\t", "'"), array("", "", "", '"'), trim($data));	
-			return preg_replace('/\s+/', '', $trimed_data);
+		if ($block instanceof Mage_Cms_Block_Block) {
+			return true;
+		} else {
+			return false;
 		}
-
-		return '';
 	}
 }
