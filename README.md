@@ -41,5 +41,5 @@ NOTES
 2. You can put javascirpt and css directly inside text areas
 3. Don't put html contents inside the text area
 4. You can put jquery in text area. In this case, it is your job to make sure that, necessary jquery files are added.
-5. By default, all the script that are related to static blocks are get included in the bottom side of the page and css files are included in `head` part (bottom side).
+5. By default, all the script and CSS that are related to static blocks are included in `head` part.
 
